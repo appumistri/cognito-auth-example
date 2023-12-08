@@ -1,4 +1,6 @@
-import { CognitoIdentityProviderClient, InitiateAuthCommand, AuthFlowType, ResendConfirmationCodeCommand, ForgotPasswordCommand } from "@aws-sdk/client-cognito-identity-provider";
+import {
+    CognitoIdentityProviderClient, InitiateAuthCommand, AuthFlowType, ForgotPasswordCommand, ConfirmForgotPasswordCommand, ChangePasswordCommand
+} from "@aws-sdk/client-cognito-identity-provider";
 
 const initiateAuth = async (username, password) => {
     const client = new CognitoIdentityProviderClient({ region: "ap-south-1" });
@@ -30,5 +32,32 @@ const forgotPassword = async (username) => {
     return result;
 };
 
+const confirmForgotPassword = async (username, confirmationCode) => {
+    const client = new CognitoIdentityProviderClient({ region: "ap-south-1" });
 
-export { initiateAuth, forgotPassword };
+    const command = new ConfirmForgotPasswordCommand({
+        ClientId: '1tcioula3m2in01h95upkevlnj',
+        Username: username,
+        ConfirmationCode: confirmationCode
+    });
+
+    const result = await client.send(command);
+    console.log('confirm forgot pswd response: ', result);
+    return result;
+};
+
+const changePassword = async (accessToken, oldPswd, newPswd) => {
+    const client = new CognitoIdentityProviderClient({ region: "ap-south-1" });
+
+    const command = new ChangePasswordCommand({
+        AccessToken: accessToken,
+        PreviousPassword: oldPswd,
+        ProposedPassword: newPswd
+    });
+
+    const result = await client.send(command);
+    console.log('change pswd response: ', result);
+    return result;
+};
+
+export { initiateAuth, forgotPassword, confirmForgotPassword, changePassword };
